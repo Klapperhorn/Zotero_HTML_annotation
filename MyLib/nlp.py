@@ -125,7 +125,23 @@ contractions = {
 }
 
 
-
+def filter_paragraphs(p_list, by="ai, chatGPT"):
+    
+    if type(by)==str:
+        by=by.split(", ")
+    by=[i.lower() for i in by]
+    
+    if type(p_list)==str:
+        p_list=[p_list]
+ 
+    
+    if p_list!=None:
+        AI_Content=[]
+        for text in p_list:
+            AI_Content_Binary=WordlistFilter(text, by)
+            if AI_Content_Binary==True:
+                AI_Content.append(text)
+        return AI_Content
 
 
 def cont_to_exp(x):
@@ -217,9 +233,11 @@ def GoogleTrans(text,src):
 
 
 
-def NLP_Pipeline(df, sentiment=False, language="en",translate=False):
+def NLP_Pipeline(df, sentiment=False, language="en",translate=False, column="text"):
     
-    df["text_clean"]=df.text.apply(TweetCleaner)
+    
+    
+    df["text_clean"]=df[column].apply(TweetCleaner)
     
     print("cleaning done.")
     df["letters_count"]=df.text_clean.apply(lambda x: len(x))
@@ -240,7 +258,7 @@ def NLP_Pipeline(df, sentiment=False, language="en",translate=False):
     
     if translate==True:
         print("Translating...")
-        df["text_clean"]=df[["text","language"]].apply(lambda x: GoogleTrans(*x),axis=1)
+        df["text_clean"]=df[[column,"language"]].apply(lambda x: GoogleTrans(*x),axis=1)
         df["text_clean"]=df["text_clean"].apply(TweetCleaner)
         df["source_language"]=df["language"]
         df["language"]="en"
