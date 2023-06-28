@@ -125,11 +125,30 @@ contractions = {
 }
 
 
+
+
+
+def WordlistFilter(Lemmata, by):
+    x=False
+    
+    if type(Lemmata)!=list:
+        Lemmata=Lemmata.split()
+        
+    # As soon as the function finds a Word from the word list, x turns to True
+    if len(Lemmata)>0:
+        for i in Lemmata:
+            if type(i)==str:
+                if i.lower() in by:
+                    x= True
+    return x
+    
+
+
 def filter_paragraphs(p_list, by="ai, chatGPT"):
     
     if type(by)==str:
-        by=by.split(", ")
-    by=[i.lower() for i in by]
+        by=by.split(",")
+    by=[i.strip().lower() for i in by]
     
     if type(p_list)==str:
         p_list=[p_list]
@@ -235,13 +254,22 @@ def GoogleTrans(text,src):
 
 def NLP_Pipeline(df, sentiment=False, language="en",translate=False, column="text"):
     
+    from datetime import datetime
+
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
     
+    print("Lenght: ", len(df))
+    
+ 
     
     df["text_clean"]=df[column].apply(TweetCleaner)
     
     print("cleaning done.")
     df["letters_count"]=df.text_clean.apply(lambda x: len(x))
     df["word_count"]=df.text_clean.apply(lambda x: len(x.split()))
+    
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    
     import spacy
     if language=="en":
         from spacytextblob.spacytextblob import SpacyTextBlob
@@ -254,6 +282,8 @@ def NLP_Pipeline(df, sentiment=False, language="en",translate=False, column="tex
         
     
     df["language"]=df.text_clean.apply(langDetect)
+    
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
     print("language detection done.")
     
     if translate==True:
@@ -267,34 +297,21 @@ def NLP_Pipeline(df, sentiment=False, language="en",translate=False, column="tex
     df["pure_text"]=df[df.language==language].text_clean.apply(pureText)
     print("pure english text done. Next: Token & Lemmatizing.")
     
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    
     df["Lemmata"]=df.pure_text.apply(Tokenizer, nlp=nlp)    
     print("Token & Lemmatizing done. Next: Remove Stopwords.")
     
     df["NoStopwords"]=df.pure_text.apply(NoStopwords, nlp=nlp)
     
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
     
     if sentiment==True:
         print("Stopwording done. Next: sentiment.")
         df[["polarity","subjectivity"]]=df.text_clean.apply(Sentiment, nlp=nlp)
 
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
     
     return df
 
 
-
-
-
-def WordlistFilter(Lemmata, by):
-    x=False
-    
-    if type(Lemmata)!=list:
-        Lemmata=Lemmata.split()
-        
-    # As soon as the function finds a Word from the word list, x turns to True
-    if len(Lemmata)>0:
-        for i in Lemmata:
-            if type(i)==str:
-                if i.lower() in by:
-                    x= True
-    return x
-    

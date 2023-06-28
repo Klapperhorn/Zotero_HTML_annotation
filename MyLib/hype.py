@@ -28,7 +28,18 @@ hypeVer=["assure", "note succeed", "strengthen", "maximize", "reinforce", "empow
 
 #manually added hype terms
 hype_selection=["important","relevant","essential","novel","fundamentally","notable","unique","transformed","in a world","significant","emphasize","exhaustive","comprehenisve","fundamental","specialized",
-"excellent","unwanted","innovative","impactful","particularly","importantly","most highly","especially", "greatly","markedly", "successfully","interestingly", "exactly", "certainly", "effectively","significantly","importance","assure", "note succeed","maximize", "reinforce","empower", "highlight", "recognize","disrupt","extinct"]
+"excellent","unwanted","innovative","impactful","particularly","importantly","most highly","especially", "greatly","markedly", "successfully","interestingly", "exactly", "certainly", "effectively","significantly","importance","assure", "note succeed","maximize","empower", "highlight", "recognize","disrupt","extinct"]
+
+
+# modal words from Ann Mische
+predictive="can", "could", "may", "might", "will", "would"
+
+imperative="have to", "let", "must", "need", "ought", "should"
+
+subjunctive="aim", "ask for", "believe", "doubt", "expect", "fear", "hope", "urge", "want", "wish", "would like to"
+
+key_modal=list(set(predictive+imperative+subjunctive))
+
 
 # However, as it is interesting :D
 Key_However=["however","but", "nevertheless","even so", "nonetheless", "still","though","yet","notwithstanding"]
