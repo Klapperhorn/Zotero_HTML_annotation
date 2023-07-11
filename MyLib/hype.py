@@ -26,9 +26,14 @@ hypeAdv=["very", "more", "particularly", "obviously", "well", "importantly", "ev
 hypeNoun=["strength", "importance", "robustness", "experience", "interest", "expert"]
 hypeVer=["assure", "note succeed", "strengthen", "maximize", "reinforce", "empower", "highlight", "recognize"]
 
+
+
+
 #manually added hype terms
-hype_selection=["important","relevant","essential","novel","fundamentally","notable","unique","transformed","in a world","significant","emphasize","exhaustive","comprehenisve","fundamental","specialized",
+hype_words=["important","relevant","essential","novel","fundamentally","notable","unique","transformed","in a world","significant","emphasize","exhaustive","comprehenisve","fundamental","specialized",
 "excellent","unwanted","innovative","impactful","particularly","importantly","most highly","especially", "greatly","markedly", "successfully","interestingly", "exactly", "certainly", "effectively","significantly","importance","assure", "note succeed","maximize","empower", "highlight", "recognize","disrupt","extinct"]
+
+Key_hypes=list(set(hypeAdj+hypeAdv+hypeNoun+hypeVer+hype_words))
 
 
 # modal words from Ann Mische
@@ -38,14 +43,16 @@ imperative="have to", "let", "must", "need", "ought", "should"
 
 subjunctive="aim", "ask for", "believe", "doubt", "expect", "fear", "hope", "urge", "want", "wish", "would like to"
 
-key_modal=list(set(predictive+imperative+subjunctive))
+mod_words=list(set(predictive+imperative+subjunctive))
+
+
+WordListDict={"predictive": predictive,"imperative":imperative,"subjunctive":subjunctive,"hype_words":hype_words,"mod_words":mod_words}
 
 
 # However, as it is interesting :D
 Key_However=["however","but", "nevertheless","even so", "nonetheless", "still","though","yet","notwithstanding"]
 
 #Combined Hypeterms
-Key_hypes=list(set(hypeAdj+hypeAdv+hypeNoun+hypeVer+hype_selection))
 
 def keyWords():
 
