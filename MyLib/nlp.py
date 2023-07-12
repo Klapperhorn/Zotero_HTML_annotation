@@ -240,11 +240,11 @@ def langDetect(text):
     return lang
 
 def GoogleTrans(text,src):
-    if type(text)==str and src=="nl":
-        print(src,text[:10])
+    if type(text)==str:
+       #print(src,text[:10])
         from deep_translator import GoogleTranslator
         #text=df.text[2][0]
-        result = GoogleTranslator(source="nl", target='en').translate(text)
+        result = GoogleTranslator(source="auto", target='en').translate(text) # or source="nl"
         return result
     else:
         return text
