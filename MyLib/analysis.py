@@ -1,8 +1,9 @@
 from datetime import datetime
 Today=datetime.now().strftime('%Y-%m-%d')
 
-
-
+def flat(l):
+    flat_list = [item for sublist in l for item in sublist]
+    return flat_list
 
 def Keyword_context(text,search_word="sustainable",context=(4,4),n_examples=10):
 

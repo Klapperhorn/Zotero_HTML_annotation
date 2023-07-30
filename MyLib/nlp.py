@@ -231,86 +231,112 @@ def Sentiment(text,nlp):
 
     
 
-def langDetect(text):
-    try:
-        from langdetect import detect
-        lang=detect(text)
-    except:
-        lang="no_language_features"
-    return lang
+def langDetect(language,text):
+    
+    if language not in [None,""]:
+        return language
+    
+    #from spacytextblob.spacytextblob import SpacyTextBlob
+    else:
+        try:
+            from langdetect import detect
+            language=detect(text)
+        except:
+            language="no_language_features"
 
-def GoogleTrans(text,src):
-    if type(text)==str:
-       #print(src,text[:10])
+        return language
+
+
+
+def GoogleTrans(text,source_language, target_language):
+    
+    # first check if source==target --> return without translation!
+    if type(text)==str and source_language!=target_language:
+        
         from deep_translator import GoogleTranslator
-        #text=df.text[2][0]
-        result = GoogleTranslator(source="auto", target='en').translate(text) # or source="nl"
-        return result
+        try:
+
+            ### language detection problems (mixing de, it & nl) --> therefore always NL!
+            if source_language!="es": ## only spanish detection works.
+                source_language="nl"
+            
+            result = GoogleTranslator(source=source_language, target=target_language).translate(text) # or source="nl"
+            print(result[:4],end=". ")
+        except:
+            print("problem with: ", text)
+        return text
     else:
         return text
 
 
-
-
-def NLP_Pipeline(df, sentiment=False, language="en",translate=False, column="text"):
-    
+def current_time():
     from datetime import datetime
-
     print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    return
+
+
+def load_nlp(target_language="en"):
+    import spacy
+    if target_language=="en":
+        nlp = spacy.load('en_core_web_sm')
+        
+    if target_language=="de":
+        spacy.cli.download("de_core_news_sm")
+        nlp = spacy.load("de_core_news_sm")   
+    return nlp
+
+def NLP_Pipeline(df, text_column="text", target_language=None, sentiment=False):
+    current_time()
+    
     
     print("Lenght: ", len(df))
-    
- 
-    
-    df["text_clean"]=df[column].apply(TweetCleaner)
+    df["text_clean"]=df[text_column].apply(TweetCleaner)
     
     print("cleaning done.")
-    df["letters_count"]=df.text_clean.apply(lambda x: len(x))
-    df["word_count"]=df.text_clean.apply(lambda x: len(x.split()))
     
-    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    df["letters_count"]=df["text_clean"].apply(lambda x: len(x))
+    df["word_count"]=df["text_clean"].apply(lambda x: len(x.split()))
     
-    import spacy
-    if language=="en":
-        from spacytextblob.spacytextblob import SpacyTextBlob
-        nlp = spacy.load('en_core_web_sm')
-    if language=="de":
-        from spacytextblob.spacytextblob import SpacyTextBlob
-        
-        spacy.cli.download("de_core_news_sm")
-        nlp = spacy.load("de_core_news_sm")
-        
+    current_time()
+    print("next: language.")
+
     
-    df["language"]=df.text_clean.apply(langDetect)
-    
-    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
-    print("language detection done.")
-    
-    if translate==True:
-        print("Translating...")
-        df["text_clean"]=df[[column,"language"]].apply(lambda x: GoogleTrans(*x),axis=1)
+    if target_language!=None:
+        if "language" not in df.columns:
+            df["language"]=None
+            
+    # only language detect if there is no language.
+         
+        df["source_language"]=df.apply(lambda x: langDetect(x["language"],x["text_clean"]),axis=1)
+        df.drop(columns=["language"],inplace=True)
+        print("language detection done.")
+        current_time()
+                        
+                                     
+        print("Next: Translating...")
+        df["text_clean"]=df.apply(lambda x: GoogleTrans(x[text_column],x["source_language"],target_language),axis=1)
         df["text_clean"]=df["text_clean"].apply(TweetCleaner)
-        df["source_language"]=df["language"]
-        df["language"]="en"
-        
+        current_time()
     
-    df["pure_text"]=df[df.language==language].text_clean.apply(pureText)
+    df["pure_text"]=df.text_clean.apply(pureText)
+    
     print("pure english text done. Next: Token & Lemmatizing.")
+    current_time()
     
-    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
-    
-    df["Lemmata"]=df.pure_text.apply(Tokenizer, nlp=nlp)    
+                                     
+    nlp=load_nlp(target_language)
+                      
+    df["Lemmata"]=df.pure_text.apply(Tokenizer, nlp=nlp)                                
     print("Token & Lemmatizing done. Next: Remove Stopwords.")
-    
+                                     
     df["NoStopwords"]=df.pure_text.apply(NoStopwords, nlp=nlp)
-    
-    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    current_time()
     
     if sentiment==True:
         print("Stopwording done. Next: sentiment.")
+                                     
         df[["polarity","subjectivity"]]=df.text_clean.apply(Sentiment, nlp=nlp)
-
-    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+        current_time()
     
     return df
 
