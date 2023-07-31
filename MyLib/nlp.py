@@ -262,9 +262,11 @@ def GoogleTrans(text,source_language, target_language):
             
             result = GoogleTranslator(source=source_language, target=target_language).translate(text) # or source="nl"
             print(result[:4],end=". ")
+            return result
         except:
             print("problem with: ", text)
-        return text
+            return text
+        
     else:
         return text
 
