@@ -63,7 +63,7 @@ def hype_word(sentence,keys=Key_hypes):
     exp=[]
 
     for key in keys:
-        if key in sentence.lower(): ## To include capitalized strings, I added .lower() in the search
+        if key.lower() in sentence.lower(): ## To include capitalized strings, I added .lower() in the search
             #uncertainD[key].extend([parag])
             exp.append(key)
             #print(key, sentence)
@@ -75,9 +75,21 @@ def hype_sentence(sentence,keys=Key_hypes):
     exp=[]
 
     for key in keys:
-        if key in sentence.lower(): ## To include capitalized strings, I added .lower() in the search
+        if key.lower() in sentence.lower(): ## To include capitalized strings, I added .lower() in the search
             #uncertainD[key].extend([parag])
             exp.append(sentence)
+            #print(key, sentence)
+    exp=list(set(exp))
+    if len(exp) >0:
+        return exp
+    
+def keyword_return(sentence,keys=Key_hypes):
+    exp=[]
+
+    for key in keys:
+        if key in sentence: ## To include capitalized strings, I added .lower() in the search
+            #uncertainD[key].extend([parag])
+            exp.append(key)
             #print(key, sentence)
     exp=list(set(exp))
     if len(exp) >0:

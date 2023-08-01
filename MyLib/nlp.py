@@ -250,7 +250,7 @@ def langDetect(language,text):
 
 def GoogleTrans(text,source_language, target_language):
     
-    # first check if source==target --> return without translation!
+    # first check if source==target (if it is english) --> return without translation!
     if type(text)==str and source_language!=target_language:
         
         from deep_translator import GoogleTranslator
@@ -310,17 +310,19 @@ def NLP_Pipeline(df, text_column="text", target_language=None, sentiment=False):
     # only language detect if there is no language.
          
         df["source_language"]=df.apply(lambda x: langDetect(x["language"],x["text_clean"]),axis=1)
+        df.loc[df.source_language!=target_language,"original_text"]=df[text_column]
         df.drop(columns=["language"],inplace=True)
         print("language detection done.")
         current_time()
                         
                                      
         print("Next: Translating...")
-        df["text_clean"]=df.apply(lambda x: GoogleTrans(x[text_column],x["source_language"],target_language),axis=1)
-        df["text_clean"]=df["text_clean"].apply(TweetCleaner)
+        df[text_column]=df.apply(lambda x: GoogleTrans(x[text_column],x["source_language"],target_language),axis=1)
+
+        df["text_clean"]=df[text_column].apply(TweetCleaner)
         current_time()
     
-    df["pure_text"]=df.text_clean.apply(pureText)
+    df["pure_text"]=df["text_clean"].apply(pureText)
     
     print("pure english text done. Next: Token & Lemmatizing.")
     current_time()
