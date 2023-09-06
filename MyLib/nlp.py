@@ -203,6 +203,13 @@ def Tokenizer(text,nlp):
     #NoStopwords=[token.lemma_ for token in NLP if token.is_stop==False and token.is_alpha==True]
     return  tokens
 
+def Tokenizer2(text,nlp):
+    if type(text)!=str:
+        return
+    NLP= nlp(text)
+    tokens=[token.lemma_ for token in NLP]
+    return tokens
+
 
 def NoStopwords(text,nlp):
     if type(text)!=str:
@@ -228,6 +235,8 @@ def Sentiment(text,nlp):
         subjectivity=0
         
     return pd.Series([polarity, subjectivity])
+
+
 
     
 
@@ -287,7 +296,39 @@ def load_nlp(target_language="en"):
         nlp = spacy.load("de_core_news_sm")   
     return nlp
 
+## metaphor detection & sentiment analysis
+
+from transformers import pipeline
+
+metaphor_pipe = pipeline("token-classification", model="CreativeLang/metaphor_detection_roberta_seq")
+sentiment_pipe = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", max_length=512, truncation=True)
+
+
+from nltk.corpus import stopwords
+stop_words = set(stopwords.words('english'))
+
+def classify_metaphors(row, column="text_clean",pipe=metaphor_pipe ,stop_words=stop_words):
+    #print(".", end=" ")
+    text = row[column]
+    result = pipe(text)
+    metaphor_token = [i['word'].lstrip("Ġ") for i in result if i['entity'] == 'LABEL_1']
+    metaphor_token = [w for w in metaphor_token if not w.lower() in stop_words]
+    #no_metaphor_token = [i['word'] for i in result if i['entity'] == 'LABEL_0']
+    return metaphor_token
+
+
+def roberta_sentiment(row, column="text_clean",pipe=sentiment_pipe):
+    text = row[column]
+    result = pipe(text)
+    sentiment=[i["label"] for i in result][0]
+    return sentiment
+
 def NLP_Pipeline(df, text_column="text", target_language=None, sentiment=False):
+    
+    from tqdm import tqdm
+    tqdm.pandas()
+
+    
     current_time()
     
     
@@ -317,7 +358,7 @@ def NLP_Pipeline(df, text_column="text", target_language=None, sentiment=False):
                         
                                      
         print("Next: Translating...")
-        df[text_column]=df.apply(lambda x: GoogleTrans(x[text_column],x["source_language"],target_language),axis=1)
+        df[text_column]=df.progress_apply(lambda x: GoogleTrans(x[text_column],x["source_language"],target_language),axis=1)
 
         df["text_clean"]=df[text_column].apply(TweetCleaner)
         current_time()
@@ -330,16 +371,16 @@ def NLP_Pipeline(df, text_column="text", target_language=None, sentiment=False):
                                      
     nlp=load_nlp(target_language)
                       
-    df["Lemmata"]=df.pure_text.apply(Tokenizer, nlp=nlp)                                
+    df["Lemmata"]=df.pure_text.progress_apply(Tokenizer, nlp=nlp)                                
     print("Token & Lemmatizing done. Next: Remove Stopwords.")
                                      
-    df["NoStopwords"]=df.pure_text.apply(NoStopwords, nlp=nlp)
+    df["NoStopwords"]=df.pure_text.progress_apply(NoStopwords, nlp=nlp)
     current_time()
     
     if sentiment==True:
         print("Stopwording done. Next: sentiment.")
                                      
-        df[["polarity","subjectivity"]]=df.text_clean.apply(Sentiment, nlp=nlp)
+        df[["polarity","subjectivity"]]=df.text_clean.progress_apply(Sentiment, nlp=nlp)
         current_time()
     
     return df

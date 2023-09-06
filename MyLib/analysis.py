@@ -37,7 +37,7 @@ def Keyword_context(text,search_word="sustainable",context=(4,4),n_examples=10):
 
     return results
 
-def make_wordcloud(flat_list,filename,Mostcommon=100,bg="white"):
+def make_wordcloud(flat_list,filename,Mostcommon=100,bg="white",file_ending="pdf"):
     from collections import Counter
     from wordcloud import WordCloud
     import matplotlib.pyplot as plt
@@ -54,7 +54,7 @@ def make_wordcloud(flat_list,filename,Mostcommon=100,bg="white"):
     
     
     if filename!="":
-        plt.savefig(Today+"_"+filename+".pdf",dpi=300)
+        plt.savefig(f"{Today}_{filename}.{file_ending}",dpi=300)
         
     plt.show()
     
