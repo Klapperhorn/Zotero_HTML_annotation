@@ -59,6 +59,22 @@ def make_wordcloud(flat_list,filename,Mostcommon=100,bg="white",file_ending="pdf
     plt.show()
     
     
+def sentence_context(df, txt_column="sentences", fill_string=" ",key_column="url"):
+    df2=df.sort_index()
+    
+    sentence_context=df2[txt_column].shift(1)+fill_string+\
+    df2[txt_column]+fill_string+\
+    df2.shift(-1)[txt_column]
+    
+    # delete the text if it stems from another document.
+    keyTrue=df2[key_column]==df2.shift(1)[key_column]
+    keyTrue2=df2[key_column]==df2.shift(-1)[key_column]
+    sentence_context=keyTrue*keyTrue2*sentence_context
+    
+    return sentence_context
+    
+    
+    
 ### GRAPH Analysis
     
 def CleanGraph(G,removeIsolates=True,minDegree=20,only_largest_component=True):

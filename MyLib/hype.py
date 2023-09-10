@@ -57,6 +57,8 @@ tech_words=tech_words.split(", ")+Key_ignorance
 # what makes us human. valuate tech for human"
 human=["human", "emotion", "play","game", "empathy","kids", "love", "body", "flesh", "humanity", "humanism", "aging", "Jesus", "student", "woman", "friendship", "god", "humanoid", "child", "religion", "arcane", "baby", "corpse", "mood", "blood","well-being","employee","identity","empathy", "friend","teacher", "joy", "life", "death", "brain", "conscious", "agency", "feeling", "toughtful", "laugh" "hug" ,"imagine", "creative", "mind", "religion", "purpose", "storytelling", "narrative", "culture", "moral", "offspring", "artist","music", "dream", "poem", "poetry", "immersion", "sharing", "caring", "care", "infant", "history", "heart", "meaningful", "personal"]
 
+commercial=["company", "organization", "capitalism", "replace", "employ", "employee", "commerc", "capital", "obsolete", "obsole"]
+
 fraud=["fraud", "decept", "dishonest","corrupt", "embezzlement", "scam", "swindle", "forgery", "misappropriation", "misappropriate","identity theft", "Ponzi scheme", "extortion", "falsification", "phishing", "blackmail", "pyramid scheme", "data breach", "manipulation", "cybercrime", "plagiarism", "fabriaction", "ghostwriting", "ghostwrit", "exam fraud", "collusion", "essay mills", "paper mills", "ghost", "authorship", "plagiarized", "diploma", "violation", "impropriety", "ethics", "fake", "qualification", "imposter","deepfake", "appropriate", "inappropriate", "accurate", "cheat", "fool"] 
 
 

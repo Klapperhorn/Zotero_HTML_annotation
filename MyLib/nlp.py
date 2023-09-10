@@ -304,6 +304,17 @@ metaphor_pipe = pipeline("token-classification", model="CreativeLang/metaphor_de
 sentiment_pipe = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", max_length=512, truncation=True)
 
 
+import spacy
+import spacy_transformers
+
+nlp_modal = spacy.load("en_core_web_trf")
+
+def add_modal_info(sentence, nlp_model=nlp_modal):
+    nlp_text=nlp_model(sentence)
+    modal_verb=[token.lemma_ for token in nlp_text if token.tag_=="MD"]
+    return modal_verb
+
+
 from nltk.corpus import stopwords
 stop_words = set(stopwords.words('english'))
 
