@@ -1,131 +1,25 @@
 import pandas as pd
 
+def current_time():
+    
+    from datetime import datetime
+    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
+    return
+
+
 #https://github.com/rehanraza24/Twitter-Text-Sentiment-Analysis-/blob/main/Text%20Preprocessing%20using%20SPACY.ipynb
 
 
-# Contaction to Expansion > can't TO can not ,you'll TO you will
-contractions = { 
-"ain't": "am not / are not / is not / has not / have not",
-"aren't": "are not / am not",
-"can't": "cannot",
-"can't've": "cannot have",
-"'cause": "because",
-"could've": "could have",
-"couldn't": "could not",
-"couldn't've": "could not have",
-"didn't": "did not",
-"doesn't": "does not",
-"don't": "do not",
-"hadn't": "had not",
-"hadn't've": "had not have",
-"hasn't": "has not",
-"haven't": "have not",
-"he'd": "he had / he would",
-"he'd've": "he would have",
-"he'll": "he shall / he will",
-"he'll've": "he shall have / he will have",
-"he's": "he has / he is",
-"how'd": "how did",
-"how'd'y": "how do you",
-"how'll": "how will",
-"how's": "how has / how is / how does",
-"i'd": "I had / I would",
-"i'd've": "I would have",
-"i'll": "I shall / I will",
-"i'll've": "I shall have / I will have",
-"i'm": "I am",
-"i've": "I have",
-"isn't": "is not",
-"it'd": "it had / it would",
-"it'd've": "it would have",
-"it'll": "it shall / it will",
-"it'll've": "it shall have / it will have",
-"it's": "it has / it is",
-"let's": "let us",
-"ma'am": "madam",
-"mayn't": "may not",
-"might've": "might have",
-"mightn't": "might not",
-"mightn't've": "might not have",
-"must've": "must have",
-"mustn't": "must not",
-"mustn't've": "must not have",
-"needn't": "need not",
-"needn't've": "need not have",
-"o'clock": "of the clock",
-"oughtn't": "ought not",
-"oughtn't've": "ought not have",
-"shan't": "shall not",
-"sha'n't": "shall not",
-"shan't've": "shall not have",
-"she'd": "she had / she would",
-"she'd've": "she would have",
-"she'll": "she shall / she will",
-"she'll've": "she shall have / she will have",
-"she's": "she has / she is",
-"should've": "should have",
-"shouldn't": "should not",
-"shouldn't've": "should not have",
-"so've": "so have",
-"so's": "so as / so is",
-"that'd": "that would / that had",
-"that'd've": "that would have",
-"that's": "that has / that is",
-"there'd": "there had / there would",
-"there'd've": "there would have",
-"there's": "there has / there is",
-"they'd": "they had / they would",
-"they'd've": "they would have",
-"they'll": "they shall / they will",
-"they'll've": "they shall have / they will have",
-"they're": "they are",
-"they've": "they have",
-"to've": "to have",
-"wasn't": "was not",
-"we'd": "we had / we would",
-"we'd've": "we would have",
-"we'll": "we will",
-"we'll've": "we will have",
-"we're": "we are",
-"we've": "we have",
-"weren't": "were not",
-"what'll": "what shall / what will",
-"what'll've": "what shall have / what will have",
-"what're": "what are",
-"what's": "what has / what is",
-"what've": "what have",
-"when's": "when has / when is",
-"when've": "when have",
-"where'd": "where did",
-"where's": "where has / where is",
-"where've": "where have",
-"who'll": "who shall / who will",
-"who'll've": "who shall have / who will have",
-"who's": "who has / who is",
-"who've": "who have",
-"why's": "why has / why is",
-"why've": "why have",
-"will've": "will have",
-"won't": "will not",
-"won't've": "will not have",
-"would've": "would have",
-"wouldn't": "would not",
-"wouldn't've": "would not have",
-"y'all": "you all",
-"y'all'd": "you all would",
-"y'all'd've": "you all would have",
-"y'all're": "you all are",
-"y'all've": "you all have",
-"you'd": "you had / you would",
-"you'd've": "you would have",
-"you'll": "you shall / you will",
-"you'll've": "you shall have / you will have",
-"you're": "you are",
-"you've": "you have"
-}
 
-
-
+def cont_to_exp(x):
+    from MyLib.cont_to_exp import contractions
+    if type(x) is str:
+        for key in contractions:
+            value = contractions[key]
+            x = x.replace(key, value)
+        return x
+    else:
+        return x
 
 
 def WordlistFilter(Lemmata, by):
@@ -163,14 +57,6 @@ def filter_paragraphs(p_list, by="ai, chatGPT"):
         return AI_Content
 
 
-def cont_to_exp(x):
-    if type(x) is str:
-        for key in contractions:
-            value = contractions[key]
-            x = x.replace(key, value)
-        return x
-    else:
-        return x
 
 
 def TweetCleaner(text):
@@ -189,35 +75,26 @@ def TweetCleaner(text):
 
 def pureText(text):
     import re
-    text=text.lower()
-    text=cont_to_exp(text)
-    text=re.sub('[^A-Z a-z 0-9äöüÄÖÜß]+','', text) # Remove all Punctiations or Special Charactors 
+    if isinstance(text,str):
+        text=text.lower()
+        text=cont_to_exp(text)
+        text=re.sub('[^A-Z a-z 0-9äöüÄÖÜß]+','', text) # Remove all Punctiations or Special Charactors 
     return text
 
 
-def Tokenizer(text,nlp):
+def Tokenize(text,nlp):
+    
+    import pandas as pd
     if type(text)!=str:
-        return
+        return pd.Series([None,None, None])  
+    
     NLP= nlp(text)
+    
     tokens=[token.lemma_ for token in NLP if token.is_alpha==True]
-    #NoStopwords=[token.lemma_ for token in NLP if token.is_stop==False and token.is_alpha==True]
-    return  tokens
-
-def Tokenizer2(text,nlp):
-    if type(text)!=str:
-        return
-    NLP= nlp(text)
-    tokens=[token.lemma_ for token in NLP]
-    return tokens
-
-
-def NoStopwords(text,nlp):
-    if type(text)!=str:
-        return
-    NLP= nlp(text)
-    #tokens=[token.lemma_ for token in NLP if token.is_alpha==True]
     NoStopwords=[token.lemma_ for token in NLP if token.is_stop==False and token.is_alpha==True]
-    return  NoStopwords
+    modal_verb=[token.lemma_ for token in NLP if token.tag_=="MD"]
+    
+    return pd.Series([tokens,NoStopwords,modal_verb])   
 
 def Sentiment(text,nlp):
     try:
@@ -238,87 +115,73 @@ def Sentiment(text,nlp):
 
 
 
-    
-
-def langDetect(language,text):
-    
+def langDetect(text,language=None):
     if language not in [None,""]:
         return language
-    
-    #from spacytextblob.spacytextblob import SpacyTextBlob
     else:
         try:
             from langdetect import detect
             language=detect(text)
         except:
             language="no_language_features"
-
+        if language not in ["es","en","nl"]: ## only spanish detection works (mixing de, it & nl) --> rest is NL
+            #print(language, "nl", end=" - ")
+            language="nl"    
         return language
 
 
 
-def GoogleTrans(text,source_language, target_language):
+def GoogleTrans(text,source_language=None, target_language="en"):
+    
+    if isinstance(text,list):
+        print("first explode the column!")
+        return None
     
     # first check if source==target (if it is english) --> return without translation!
-    if type(text)==str and source_language!=target_language:
+    if isinstance(text,str) and source_language!=target_language:
+        
+        if source_language==None:
+            source_language=langDetect(text,source_language)
         
         from deep_translator import GoogleTranslator
-        try:
-
-            ### language detection problems (mixing de, it & nl) --> therefore always NL!
-            if source_language!="es": ## only spanish detection works.
-                source_language="nl"
-            
-            result = GoogleTranslator(source=source_language, target=target_language).translate(text) # or source="nl"
-            print(result[:4],end=". ")
-            return result
+        
+        try:                
+            translator=GoogleTranslator(source=source_language, target=target_language)
+            text_translated = translator.translate(text) # or source="nl"
         except:
             print("problem with: ", text)
-            return text
-        
+        return pd.Series([text_translated,source_language])
     else:
-        return text
+        return pd.Series([text,source_language])
 
 
-def current_time():
-    from datetime import datetime
-    print("Current Time =", datetime.now().strftime("%H:%M:%S"))
-    return
 
 
 def load_nlp(target_language="en"):
     import spacy
+    
     if target_language=="en":
-        nlp = spacy.load('en_core_web_sm')
+        import spacy_transformers
+        nlp = spacy.load("en_core_web_trf")
+        #nlp = spacy.load('en_core_web_sm')
         
     if target_language=="de":
         spacy.cli.download("de_core_news_sm")
         nlp = spacy.load("de_core_news_sm")   
     return nlp
 
-## metaphor detection & sentiment analysis
-
-from transformers import pipeline
-
-metaphor_pipe = pipeline("token-classification", model="CreativeLang/metaphor_detection_roberta_seq")
-sentiment_pipe = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", max_length=512, truncation=True)
 
 
-import spacy
-import spacy_transformers
-
-nlp_modal = spacy.load("en_core_web_trf")
-
-def add_modal_info(sentence, nlp_model=nlp_modal):
-    nlp_text=nlp_model(sentence)
-    modal_verb=[token.lemma_ for token in nlp_text if token.tag_=="MD"]
-    return modal_verb
-
-
-from nltk.corpus import stopwords
-stop_words = set(stopwords.words('english'))
-
-def classify_metaphors(row, column="text_clean",pipe=metaphor_pipe ,stop_words=stop_words):
+def classify_metaphors(row, column="sentences",pipe=None ,stop_words=[]):
+    
+    if len(stop_words)==0:
+        from nltk.corpus import stopwords
+        stop_words= list(set(stopwords.words('english')))
+   
+    if pipe==None:
+        from transformers import pipeline
+        pipe = pipeline("token-classification", model="CreativeLang/metaphor_detection_roberta_seq")
+    
     #print(".", end=" ")
     text = row[column]
     result = pipe(text)
@@ -328,72 +191,83 @@ def classify_metaphors(row, column="text_clean",pipe=metaphor_pipe ,stop_words=s
     return metaphor_token
 
 
-def roberta_sentiment(row, column="text_clean",pipe=sentiment_pipe):
+def roberta_sentiment(row, column="sentences",pipe=None):
+    
+    if pipe==None:
+        pipe = pipeline("sentiment-analysis", model="cardiffnlp/twitter-roberta-base-sentiment-latest", max_length=512, truncation=True)
+    
     text = row[column]
     result = pipe(text)
     sentiment=[i["label"] for i in result][0]
     return sentiment
 
-def NLP_Pipeline(df, text_column="text", target_language=None, sentiment=False):
-    
+def check_return_nan(df):
+    url=df[df.sentences.isna()]["url"]
+    print("nan_sentence:", url)
+    df.dropna(subset="sentences",inplace=True)
+    return df
+
+def NLP_Pipeline(df, text_column="text", sentence_wise=True, language="en", sentiment=False, metaphors=False):
     from tqdm import tqdm
     tqdm.pandas()
+    
+    if isinstance(df[text_column],list):
+        print(f"explode by {text_column}")
+        df=df.explode(text_column)
+  
+    current_time()
 
+    if sentence_wise==True:
+        print("len: ",len(df))
+        print("splitting to sentences.")
+        
+        from nltk.tokenize import sent_tokenize
+        
+        df["sentences"]=df[text_column].dropna().apply(sent_tokenize)
+        df=df.explode("sentences")
+        
+        print("len: ",len(df))
+        df['S_counter'] = df.groupby('key').cumcount()        
+        df["key_S"]=df.apply(lambda x: str(x.key)+"_"+str(x.S_counter), axis=1)
+    
+    
+    text_column="sentences"
+    nlp=load_nlp(language)    
+    print("Token & Lemmatizing & stopword removal & modal_word.") 
+    
+    df[["Lemmata","NoStopwords","modal_words"]]=df[text_column].progress_apply(Tokenize, nlp=nlp)
     
     current_time()
+   
+    df["pure_text"]=df[text_column].apply(pureText)
+   # df["letters_count"]=df[text_column].dropna().apply(lambda x: len(x))
+   # df["word_count"]=df[text_column].dropna().apply(lambda x: len(x.split()))
     
-    
-    print("Lenght: ", len(df))
-    df["text_clean"]=df[text_column].apply(TweetCleaner)
-    
-    print("cleaning done.")
-    
-    df["letters_count"]=df["text_clean"].apply(lambda x: len(x))
-    df["word_count"]=df["text_clean"].apply(lambda x: len(x.split()))
-    
-    current_time()
-    print("next: language.")
-
-    
-    if target_language!=None:
-        if "language" not in df.columns:
-            df["language"]=None
-            
-    # only language detect if there is no language.
-         
-        df["source_language"]=df.apply(lambda x: langDetect(x["language"],x["text_clean"]),axis=1)
-        df.loc[df.source_language!=target_language,"original_text"]=df[text_column]
-        df.drop(columns=["language"],inplace=True)
-        print("language detection done.")
-        current_time()
-                        
-                                     
-        print("Next: Translating...")
-        df[text_column]=df.progress_apply(lambda x: GoogleTrans(x[text_column],x["source_language"],target_language),axis=1)
-
-        df["text_clean"]=df[text_column].apply(TweetCleaner)
-        current_time()
-    
-    df["pure_text"]=df["text_clean"].apply(pureText)
-    
-    print("pure english text done. Next: Token & Lemmatizing.")
-    current_time()
-    
-                                     
-    nlp=load_nlp(target_language)
-                      
-    df["Lemmata"]=df.pure_text.progress_apply(Tokenizer, nlp=nlp)                                
-    print("Token & Lemmatizing done. Next: Remove Stopwords.")
-                                     
-    df["NoStopwords"]=df.pure_text.progress_apply(NoStopwords, nlp=nlp)
-    current_time()
+    df=check_return_nan(df)
+        
     
     if sentiment==True:
-        print("Stopwording done. Next: sentiment.")
-                                     
-        df[["polarity","subjectivity"]]=df.text_clean.progress_apply(Sentiment, nlp=nlp)
-        current_time()
-    
+        
+        from transformers import pipeline
+        model="cardiffnlp/twitter-roberta-base-sentiment-latest"
+        sentiment_pipe = pipeline("sentiment-analysis", model=model, max_length=512, truncation=True)
+        
+        print("Stopwording done. Next: sentiment.")                              
+        df["sentiment"] = df.progress_apply(roberta_sentiment, axis=1,column=text_column,pipe=sentiment_pipe)
+        
+    if metaphors==True:
+        
+        print("Now - metaphors.")  
+        from nltk.corpus import stopwords
+        stop_words= list(set(stopwords.words('english')))
+        
+        from transformers import pipeline
+        metaphor_pipe = pipeline("token-classification", model="CreativeLang/metaphor_detection_roberta_seq")
+        
+        df["metaphors"] = df.progress_apply(classify_metaphors, axis=1,column=text_column,stop_words=stop_words,pipe=metaphor_pipe)
+        df["metaphors_n"] = df.metaphors.apply(lambda x: len(x))
+        
+
     return df
 
 
